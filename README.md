@@ -10,7 +10,7 @@
 大致架构图：
 
 ```mermaid
-  graph;
+  graph TD;
       APP<-->bridge云主机;
       bridge云主机-->client内网主机;
       client内网主机-->服务;
