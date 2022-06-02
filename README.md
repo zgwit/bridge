@@ -6,11 +6,19 @@
 
 [APP] <==> [bridge云主机] <===> [client内网主机] <===> [服务]
 
+```mermaid
+  graph;
+      APP<-->bridge云主机;
+      bridge云主机-->client内网主机;
+      client内网主机-->服务;
+```
 
+测试代码
+```javascript
 const {open} = require("./client");
 const {create} = require("./bridge");
 
 create("8000", "8081")
 
 open("localhost", "8000", "localhost", "8080")
-
+```
