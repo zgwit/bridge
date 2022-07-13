@@ -1,18 +1,19 @@
 const net = require("net")
 
 
-function create(localPort, remotePort) {
+function create(mainPort, outerPort) {
     let incoming = []
     let mainSocket
 
-    let local = net.createServer(function (sock) {
+    let mainServer = net.createServer(function (sock) {
         //第一个连接做为主连接
         if (!mainSocket) {
-            console.log("主连接接入", sock.remoteAddress)
+            console.log("Main online", sock.remoteAddress)
+
             mainSocket = sock
             sock.on("data", function (data) {
                 //ignore
-                console.log("主连接数据", data.toString())
+                //console.log("Main data", data.toString())
             })
             sock.on("error", function (err) {
                 console.error(err)
@@ -23,26 +24,28 @@ function create(localPort, remotePort) {
             return
         }
 
+        console.log("Main incoming", sock.remoteAddress)
+
         let s = incoming.pop()
         if (s) {
-            console.log("连接绑定", sock.remoteAddress, s.remoteAddress)
+            console.log("Bind", sock.remoteAddress, s.remoteAddress)
             sock.pipe(s)
             s.pipe(sock)
         }
     })
 
-    local.on('error', (err) => {
+    mainServer.on('error', (err) => {
         throw err;
     });
 
-    local.listen(localPort, () => {
-        console.log('Local bind');
+    mainServer.listen(mainPort, () => {
+        console.log('Main bind', mainPort);
     });
 
 
-    let server = net.createServer(function (socket) {
+    let outerServer = net.createServer(function (socket) {
         if (mainSocket) {
-            console.log("外部接入", socket.remoteAddress)
+            console.log("Outer incoming", socket.remoteAddress)
             incoming.push(socket)
             mainSocket.write("yield:")
         } else {
@@ -50,12 +53,12 @@ function create(localPort, remotePort) {
         }
     })
 
-    server.on('error', (err) => {
+    outerServer.on('error', (err) => {
         throw err;
     });
 
-    server.listen(remotePort, () => {
-        console.log('Server bind');
+    outerServer.listen(outerPort, () => {
+        console.log('Outer server bind', outerPort);
     });
 }
 

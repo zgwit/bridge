@@ -5,9 +5,9 @@ function open(bridgeHost, bridgePort, localHost, localPort) {
 
 
     let sock = net.createConnection({host: bridgeHost, port: bridgePort}, function () {
-        console.log("主连接连接成功")
+        console.log("Bridge connected")
         timer = setInterval(function (){
-            sock.write("heartbeat")
+            sock.write("heartbeat:")
         }, 30000)
     })
 
@@ -38,7 +38,7 @@ function open(bridgeHost, bridgePort, localHost, localPort) {
 
     sock.on("data", function (data) {
         let text = data.toString()
-        console.log("主连接数据", text)
+        console.log("Bridge data", text)
         let commands = text.split(":")
         commands.forEach(handle)
     })
