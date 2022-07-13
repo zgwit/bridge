@@ -15,9 +15,7 @@ function create(mainPort, outerPort) {
                 //ignore
                 //console.log("Main data", data.toString())
             })
-            sock.on("error", function (err) {
-                console.error(err)
-            })
+            sock.on("error", console.error)
             sock.on("close", function () {
                 mainSocket = undefined
             })
@@ -48,6 +46,7 @@ function create(mainPort, outerPort) {
             console.log("Outer incoming", socket.remoteAddress)
             incoming.push(socket)
             mainSocket.write("yield:")
+            socket.on("error", console.error)
         } else {
             socket.end("none")
         }

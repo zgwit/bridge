@@ -43,9 +43,7 @@ function open(bridgeHost, bridgePort, localHost, localPort) {
         commands.forEach(handle)
     })
 
-    sock.on("error", function (err){
-        console.error(err)
-    })
+    sock.on("error", console.error)
 
     sock.on("close", function () {
         //重新连接
